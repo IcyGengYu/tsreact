@@ -1,11 +1,12 @@
+import recommendReducer from '@/views/discover/c-views/recommend/store/recommend'
 import { configureStore } from '@reduxjs/toolkit'
 import counterReducer from './modules/counter'
-import discoverReducer from './modules/discover'
 
 const store = configureStore({
   reducer: {
     counter: counterReducer,
-    discover: discoverReducer
+    // discover: recommendReducer
+    recommend: recommendReducer
   }
 })
 

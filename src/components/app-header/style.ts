@@ -1,23 +1,5 @@
 import styled from 'styled-components'
 
-// import styled from 'styled-components'
-// export const HeaderWrapper = styled.div`
-//   height: 75px;
-//   background-color: #242424;
-//   font-size: 14px;
-//   color: #fff;
-
-//   .content {
-//     display: flex;
-//     justify-content: space-between;
-//     ${(props) => props.theme.mix.wrapv1}
-//   }
-
-//   .divider {
-//     height: 5px;
-//     background-color: ${(props) => props.theme.primary};
-//   }
-// `
 export const HeaderWrapper = styled.div`
   height: 75px;
   background-color: #242424;
