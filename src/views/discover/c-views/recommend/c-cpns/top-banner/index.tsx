@@ -47,7 +47,7 @@ const TopBanner: FC<IProps> = () => {
     <TopBannerWrapper
       style={{ background: `url(${bgImageUrl}) center center / 6000px` }}
     >
-      <div className="banner wrap-v1">
+      <div className="banner wrap-v2">
         <BannerLeft>
           <Carousel
             effect="fade"

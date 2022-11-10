@@ -10,7 +10,7 @@ export const TopBannerWrapper = styled.div`
 
 export const BannerLeft = styled.div`
   position: relative;
-  width: 810px;
+  width: 730px;
 
   .banner-item {
     overflow: hidden;
@@ -62,7 +62,7 @@ export const BannerControl = styled.div`
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-
+  height: 63px;
   .btn {
     position: absolute;
     width: 37px;

@@ -3,6 +3,7 @@ import { useRoutes } from 'react-router-dom'
 import AppFooter from './components/app-footer'
 import AppHeader from './components/app-header'
 import routes from './router'
+import Player from './views/player'
 
 function App() {
   return (
@@ -12,6 +13,8 @@ function App() {
         <div className="main">{useRoutes(routes)} </div>
       </Suspense>
       <AppFooter />
+      {/* 播放工具栏 */}
+      <Player />
     </div>
   )
 }
