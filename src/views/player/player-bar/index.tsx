@@ -48,6 +48,7 @@ const AppPlayerBar: FC<IProps> = () => {
   const audioRef = useRef<HTMLAudioElement>(null)
   const dispatch = useAppDispatch()
   useEffect(() => {
+    message.destroy('lyric')
     dispatch(fetchCurrentSongAction(1804604231))
   }, [])
 
@@ -147,7 +148,6 @@ const AppPlayerBar: FC<IProps> = () => {
   //   dispatch(fetchCurrentSongAction(playSongList[index].id))
   // }
   function handleChangeMusic(isNext = true) {
-    message.destroy('lyric')
     dispatch(changeMusicAction(isNext))
   }
 
