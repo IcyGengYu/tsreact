@@ -2,6 +2,8 @@ import React, { memo } from 'react'
 import type { FC, ReactNode } from 'react'
 import { TopListItemWrapper } from './style'
 import { getImageSize } from '@/utils'
+import { useAppDispatch } from '@/hooks'
+import { fetchCurrentSongAction } from '@/views/player/store/player'
 
 interface IProps {
   children?: ReactNode
@@ -11,6 +13,11 @@ interface IProps {
 const TopListItem: FC<IProps> = (props) => {
   const { itemData } = props
   const { tracks = [] } = itemData
+  const dispatch = useAppDispatch()
+
+  function handlePlayClick(id: number) {
+    dispatch(fetchCurrentSongAction(id))
+  }
   return (
     <TopListItemWrapper>
       <div className="header">
@@ -34,7 +41,10 @@ const TopListItem: FC<IProps> = (props) => {
               <div className="info">
                 <div className="name">{item.name}</div>
                 <div className="operator">
-                  <button className="btn sprite_02 play"></button>
+                  <button
+                    className="btn sprite_02 play"
+                    onClick={() => handlePlayClick(item.id)}
+                  ></button>
                   <button className="btn sprite_icon2 add"></button>
                   <button className="btn sprite_02 favor"></button>
                 </div>

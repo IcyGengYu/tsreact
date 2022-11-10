@@ -8,10 +8,15 @@ import {
 } from './style'
 import { Link } from 'react-router-dom'
 import { formatTime, getImageSize, getSongPlayUrl } from '@/utils'
-import { Slider } from 'antd'
+import { Slider, message } from 'antd'
 import { shallowEqualApp, useAppDispatch, useAppSelector } from '@/hooks'
 import { useRef } from 'react'
-import { changeLyricIndexAction, fetchCurrentSongAction } from '../store/player'
+import {
+  changeLyricIndexAction,
+  changeMusicAction,
+  changePlayModeAction,
+  fetchCurrentSongAction
+} from '../store/player'
 
 interface IProps {
   children?: ReactNode
@@ -23,11 +28,19 @@ const AppPlayerBar: FC<IProps> = () => {
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [isSliding, setIsSliding] = useState(false)
-  const { currentSong, lyrics, lyricIndex } = useAppSelector(
+  const {
+    currentSong,
+    lyrics,
+    lyricIndex,
+
+    playMode
+  } = useAppSelector(
     (state) => ({
       currentSong: state.player.currentSong,
       lyrics: state.player.lyrics,
-      lyricIndex: state.player.lyricIndex
+      lyricIndex: state.player.lyricIndex,
+
+      playMode: state.player.playMode
     }),
     shallowEqualApp
   )
@@ -41,9 +54,10 @@ const AppPlayerBar: FC<IProps> = () => {
   // 组件内的副作用
   useEffect(() => {
     audioRef.current!.src = getSongPlayUrl(currentSong.id)
-    // audioRef.current?.play().catch(() => {
-    //   setIsPlaying(false)
-    // })
+    audioRef.current
+      ?.play()
+      .then(() => setIsPlaying(true))
+      .catch(() => setIsPlaying(false))
 
     // 获取总时间
     setDuration(currentSong.dt)
@@ -69,12 +83,35 @@ const AppPlayerBar: FC<IProps> = () => {
     }
 
     if (lyricIndex === index || index === -1) return
-    console.log(lyrics[index]?.text)
 
     dispatch(changeLyricIndexAction(index))
+    message.open({
+      content: lyrics[index]?.text,
+      key: 'lyric',
+      duration: 0
+    })
+
+    // content: any;
+    // duration?: number;
+    // type?: NoticeType;
+    // prefixCls?: string;
+    // rootPrefixCls?: string;
+    // getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
+    // onClose?: () => void;
+    // icon?: React.ReactNode;
+    // key?: string | number;
+    // style?: React.CSSProperties;
+    // className?: string;
+    // onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
   }
   function handleTimeEnded() {
     // console.log('first')
+    if (playMode === 2) {
+      audioRef.current!.currentTime = 0
+      audioRef.current?.play()
+    } else {
+      handleChangeMusic(true)
+    }
   }
   function handlePlayClick() {
     isPlaying
@@ -99,8 +136,25 @@ const AppPlayerBar: FC<IProps> = () => {
     setCurrentTime(currentTime)
     setProgress(value)
   }
-  function handPrevClicked() {
-    window.open('')
+  // function handPrevClicked() {
+  //   let index = playSongIndex - 1
+  //   if (index < 0) index = playSongList.length - 1
+  //   dispatch(fetchCurrentSongAction(playSongList[index].id))
+  // }
+  // function handNextClicked() {
+  //   let index = playSongIndex + 1
+  //   if (index === playSongList.length) index = 0
+  //   dispatch(fetchCurrentSongAction(playSongList[index].id))
+  // }
+  function handleChangeMusic(isNext = true) {
+    message.destroy('lyric')
+    dispatch(changeMusicAction(isNext))
+  }
+
+  function handleChangeModeClick() {
+    let newPlayMode = playMode + 1
+    if (newPlayMode > 2) newPlayMode = 0
+    dispatch(changePlayModeAction(newPlayMode))
   }
   return (
     <PlayerBarWrapper className="sprite_playbar">
@@ -108,13 +162,16 @@ const AppPlayerBar: FC<IProps> = () => {
         <BarControl isPlaying={isPlaying}>
           <button
             className="btn sprite_playbar prev"
-            onClick={handPrevClicked}
+            onClick={() => handleChangeMusic(false)}
           ></button>
           <button
             className="btn sprite_playbar play"
             onClick={handlePlayClick}
           ></button>
-          <button className="btn sprite_playbar next"></button>
+          <button
+            className="btn sprite_playbar next"
+            onClick={() => handleChangeMusic()}
+          ></button>
         </BarControl>
         <BarPlayerInfo>
           <Link to="/player">
@@ -127,7 +184,7 @@ const AppPlayerBar: FC<IProps> = () => {
 
           <div className="info">
             <div className="song">
-              <span className="song-name">{currentSong.name}</span>
+              <span className="song-name">{currentSong?.name}</span>
               <span className="singer-name">{currentSong?.ar?.[0]?.name}</span>
             </div>
             <div className="progress">
@@ -146,7 +203,7 @@ const AppPlayerBar: FC<IProps> = () => {
             </div>
           </div>
         </BarPlayerInfo>
-        <BarOperator playMode={1}>
+        <BarOperator playMode={playMode}>
           <div className="left">
             <button className="btn pip"></button>
             <button className="btn sprite_playbar favor"></button>
@@ -154,7 +211,10 @@ const AppPlayerBar: FC<IProps> = () => {
           </div>
           <div className="right sprite_playbar">
             <button className="btn sprite_playbar volume"></button>
-            <button className="btn sprite_playbar loop"></button>
+            <button
+              className="btn sprite_playbar loop"
+              onClick={handleChangeModeClick}
+            ></button>
             <button className="btn sprite_playbar playlist"></button>
           </div>
         </BarOperator>

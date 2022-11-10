@@ -9,7 +9,7 @@ function App() {
   return (
     <div className="App">
       <AppHeader />
-      <Suspense fallback="loading">
+      <Suspense fallback="">
         <div className="main">{useRoutes(routes)} </div>
       </Suspense>
       <AppFooter />
